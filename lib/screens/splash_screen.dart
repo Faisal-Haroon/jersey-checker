@@ -105,10 +105,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.checkroom_outlined,
-                        size: 64,
-                        color: AppTheme.primaryBlue,
+                      child: Image.asset(
+                        'assets/TransparentLogo.png',
+                        width: 64,
+                        height: 64,
+                        cacheWidth: 200,
                       ),
                     ),
                     const SizedBox(height: 28),

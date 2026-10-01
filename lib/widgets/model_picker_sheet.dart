@@ -102,6 +102,7 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
       }
 
       if (bytes == null || bytes.isEmpty) {
+        if (mounted) Navigator.pop(context);
         _showError('Model file not accessible.');
         return;
       }
@@ -109,6 +110,7 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
       final textures = GlbTextureExtractorService.extractTexturesFromGlbBytes(bytes);
       if (textures.isEmpty) {
         if (mounted) {
+          Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Row(
@@ -131,6 +133,7 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
 
       final countSaved = await GlbTextureExtractorService.saveAllExtractedTexturesToGallery(textures, model.title);
       if (mounted) {
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(countSaved > 0
@@ -141,7 +144,10 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
         );
       }
     } catch (e) {
-      if (mounted) _showError(e.toString());
+      if (mounted) {
+        Navigator.pop(context);
+        _showError(e.toString());
+      }
     }
   }
 
@@ -188,36 +194,38 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Enter direct link to a .glb or .gltf 3D model hosted online (Google Drive, Discord, CDN).',
-              style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
-            ),
-            const SizedBox(height: 14),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Model Name (Optional)',
-                hintText: 'e.g. Fielder Model',
-                filled: true,
-                fillColor: AppTheme.background,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Enter direct link to a .glb or .gltf 3D model hosted online (Google Drive, Discord, CDN).',
+                style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _urlController,
-              decoration: InputDecoration(
-                labelText: 'Direct Model URL (.glb)',
-                hintText: 'https://example.com/model.glb',
-                filled: true,
-                fillColor: AppTheme.background,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              const SizedBox(height: 14),
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Model Name (Optional)',
+                  hintText: 'e.g. Fielder Model',
+                  filled: true,
+                  fillColor: AppTheme.background,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              TextField(
+                controller: _urlController,
+                decoration: InputDecoration(
+                  labelText: 'Direct Model URL (.glb)',
+                  hintText: 'https://example.com/model.glb',
+                  filled: true,
+                  fillColor: AppTheme.background,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -276,8 +284,8 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
               Expanded(
                 child: FilledButton.icon(
                   onPressed: _isImporting ? null : _handleImportLocal,
-                  icon: const Icon(Icons.add_a_photo_outlined, size: 18),
-                  label: Text(_isImporting ? 'Importing...' : 'Import .GLB File'),
+                  icon: const Icon(Icons.add_a_photo_outlined, size: 16),
+                  label: Text(_isImporting ? 'Importing...' : 'Import GLB'),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppTheme.primaryBlue,
                     foregroundColor: Colors.white,
@@ -287,9 +295,24 @@ class _ModelPickerSheetState extends State<ModelPickerSheet> {
               const SizedBox(width: 10),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: _isDownloading ? null : _showDownloadDialog,
-                  icon: const Icon(Icons.link, size: 18),
-                  label: Text(_isDownloading ? 'Downloading...' : 'From Web Link'),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          content: const Text('This feature is coming soon in the next update!'),
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: AppTheme.textMuted,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+                  },
+                  icon: const Icon(Icons.link, size: 16),
+                  label: const Text('Open Link'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.textMuted,
+                    side: const BorderSide(color: AppTheme.border),
+                  ),
                 ),
               ),
             ],

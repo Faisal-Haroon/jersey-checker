@@ -44,15 +44,16 @@ class AppInfoSheet extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(
-                  Icons.checkroom_rounded,
-                  color: AppTheme.primaryBlue,
-                  size: 32,
+                child: Image.asset(
+                  'assets/TransparentLogo.png',
+                  width: 44,
+                  height: 44,
+                  cacheWidth: 150,
                 ),
               ),
               const SizedBox(width: 14),
@@ -61,7 +62,7 @@ class AppInfoSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Jersey Studio & PNG to Bytes',
+                      'Jersey Studio & PNG to File',
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
@@ -70,7 +71,7 @@ class AppInfoSheet extends StatelessWidget {
                     ),
                     SizedBox(height: 2),
                     Text(
-                      '3D Kit Viewer & Binary Converter in Mobile',
+                      '3D Model Viewer & File Converter',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.textMuted,
@@ -93,7 +94,7 @@ class AppInfoSheet extends StatelessWidget {
               border: Border.all(color: AppTheme.border),
             ),
             child: const Text(
-              'Jersey Studio is a lightweight mobile utility to inspect 3D sports models, test custom jersey textures in real-time, extract embedded textures, and convert images into binary formats effortlessly.',
+              'Jersey Studio is a lightweight mobile utility to preview PNG textures on 3D models in real-time, extract embedded image data, and convert PNG files to binary format effortlessly.',
               style: TextStyle(
                 fontSize: 12,
                 height: 1.45,

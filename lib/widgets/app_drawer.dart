@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -12,56 +13,44 @@ class AppDrawer extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelectTab;
 
-  void _showPrivacyPolicyDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.cardColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppTheme.border),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.privacy_tip_outlined, color: AppTheme.primaryBlue),
-            SizedBox(width: 10),
-            Text('Privacy Policy', style: TextStyle(color: AppTheme.textMain, fontSize: 18)),
-          ],
-        ),
-        content: const SingleChildScrollView(
-          child: Text(
-            'Jersey Studio respects your privacy.\n\n'
-            '• All 3D model processing and texture rendering happens locally on your device.\n'
-            '• We do not collect or upload any personal files or textures to external servers.\n'
-            '• Storage permissions are used solely for loading GLB models and saving custom texture showcase screenshots.',
-            style: TextStyle(fontSize: 13, color: AppTheme.textMuted, height: 1.4),
+  void _openPrivacyPolicy(BuildContext context) async {
+    final url = Uri.parse('https://baltistanigamer1.blogspot.com/p/jersey-checker-studio-privacy-policy.html');
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open Privacy Policy.'),
+            behavior: SnackBarBehavior.floating,
           ),
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
+        );
+      }
+    }
   }
 
   void _shareApp(BuildContext context) {
     // ignore: deprecated_member_use
     Share.share(
-      'Check out Jersey Studio! Preview custom 3D models & convert PNG jersey textures for mobile games.',
-      subject: 'Jersey Studio App',
+      'Check out Jersey Checker Studio! Preview 3D models & extract textures easily.\n\nGet it on Play Store:\nhttps://play.google.com/store/apps/details?id=com.bobziex.jerseychecker',
+      subject: 'Jersey Checker Studio App',
     );
   }
 
-  void _rateApp(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Thank you for rating Jersey Studio! ⭐⭐⭐⭐⭐'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+  void _rateApp(BuildContext context) async {
+    final url = Uri.parse('https://play.google.com/store/apps/details?id=com.bobziex.jerseychecker');
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open Play Store. Please search for us manually!'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -72,50 +61,61 @@ class AppDrawer extends StatelessWidget {
       width: drawerWidth,
       child: Drawer(
         backgroundColor: AppTheme.cardColor,
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Drawer Header
-              Container(
-                padding: const EdgeInsets.all(20),
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  border: Border(bottom: BorderSide(color: AppTheme.border)),
-                  color: AppTheme.cardColor,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppTheme.background,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.border),
-                      ),
-                      child: const Icon(
-                        Icons.checkroom_outlined,
-                        color: AppTheme.primaryBlue,
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Jersey Studio',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: AppTheme.textMain,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      '3D Kit Previewer & Converter',
-                      style: TextStyle(fontSize: 11, color: AppTheme.textMuted),
-                    ),
+        child: Column(
+          children: [
+            // Drawer Header
+            Container(
+              padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 24, 20, 26),
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0F2952),
+                    Color(0xFF1648A8),
                   ],
                 ),
               ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                    ),
+                    child: Image.asset(
+                      'assets/TransparentLogo.png',
+                      width: 44,
+                      height: 44,
+                      cacheWidth: 150,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  const Text(
+                    'Jersey Studio',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    '3D Model Viewer & Converter',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.white.withValues(alpha: 0.75),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
               const SizedBox(height: 12),
               
               // Navigation Links
@@ -132,7 +132,7 @@ class AppDrawer extends StatelessWidget {
               _DrawerTile(
                 icon: Icons.view_in_ar_outlined,
                 selectedIcon: Icons.view_in_ar,
-                title: '3D Studio Tester',
+                title: '3D Studio',
                 isSelected: selectedIndex == 1,
                 onTap: () {
                   Navigator.pop(context);
@@ -142,7 +142,7 @@ class AppDrawer extends StatelessWidget {
               _DrawerTile(
                 icon: Icons.swap_horiz_outlined,
                 selectedIcon: Icons.swap_horiz,
-                title: 'PNG Converter',
+                title: 'Converter',
                 isSelected: selectedIndex == 2,
                 onTap: () {
                   Navigator.pop(context);
@@ -152,7 +152,7 @@ class AppDrawer extends StatelessWidget {
               _DrawerTile(
                 icon: Icons.person_outline_rounded,
                 selectedIcon: Icons.person_rounded,
-                title: 'Community Hub',
+                title: 'Community',
                 isSelected: selectedIndex == 3,
                 onTap: () {
                   Navigator.pop(context);
@@ -170,7 +170,7 @@ class AppDrawer extends StatelessWidget {
                 isSelected: false,
                 onTap: () {
                   Navigator.pop(context);
-                  _showPrivacyPolicyDialog(context);
+                  _openPrivacyPolicy(context);
                 },
               ),
               _DrawerTile(
@@ -195,8 +195,7 @@ class AppDrawer extends StatelessWidget {
               ),
 
               const Spacer(),
-            ],
-          ),
+          ],
         ),
       ),
     );

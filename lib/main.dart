@@ -96,6 +96,22 @@ class _StudioHomePageState extends State<StudioHomePage> {
     }
   }
 
+  Future<void> _pickBytesFiles() async {
+    try {
+      final selectedList = await TextureService.pickMultipleBytesFiles();
+      if (!mounted || selectedList.isEmpty) return;
+      setState(() {
+        for (final item in selectedList) {
+          if (!_converterFiles.any((existing) => existing.name == item.name)) {
+            _converterFiles.add(item);
+          }
+        }
+      });
+    } catch (e) {
+      if (mounted) _showMessage(e.toString());
+    }
+  }
+
   void _showMessage(String message) {
     final cleanMsg = message.replaceAll(RegExp(r'^(Exception|PlatformException|FormatException):\s*'), '');
     ScaffoldMessenger.of(context)
@@ -229,7 +245,7 @@ class _StudioHomePageState extends State<StudioHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final titles = ['Jersey Studio', '3D Kit Tester', 'PNG Converter', 'Community Hub'];
+    final titles = ['Jersey Studio', '3D Studio', 'Converter', 'Community'];
 
     return PopScope(
       canPop: false,
@@ -246,7 +262,19 @@ class _StudioHomePageState extends State<StudioHomePage> {
           onSelectTab: (index) => setState(() => _tabIndex = index),
         ),
         appBar: AppBar(
-          backgroundColor: AppTheme.primaryBlue,
+          backgroundColor: Colors.transparent,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF0F2952),
+                  Color(0xFF1648A8),
+                ],
+              ),
+            ),
+          ),
           elevation: 0,
           centerTitle: false,
           title: Text(
@@ -287,6 +315,7 @@ class _StudioHomePageState extends State<StudioHomePage> {
               ConverterScreen(
                 files: _converterFiles,
                 onPickFiles: _pickConverterFiles,
+                onPickBytesFiles: _pickBytesFiles,
                 onClearAll: () => setState(_converterFiles.clear),
                 onRemoveFile: (file) =>
                     setState(() => _converterFiles.remove(file)),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 
@@ -34,7 +35,7 @@ class CommunityProfileScreen extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryBlue.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
@@ -43,10 +44,13 @@ class CommunityProfileScreen extends StatelessWidget {
                     width: 2,
                   ),
                 ),
-                child: const Icon(
-                  Icons.person,
-                  size: 48,
-                  color: AppTheme.primaryBlue,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/TransparentLogo.png',
+                    width: 76,
+                    height: 76,
+                    cacheWidth: 200,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),
@@ -88,7 +92,7 @@ class CommunityProfileScreen extends StatelessWidget {
         _SocialCard(
           title: 'Baltistani Gamer',
           subtitle: 'Official Youtube Channel • Lead App Developer',
-          icon: Icons.play_circle_fill_rounded,
+          icon: FontAwesomeIcons.youtube,
           iconColor: const Color(0xFFFF0000),
           onTap: () => _openUrl(context, 'https://youtube.com/@baltistanigamer'),
         ),
@@ -98,7 +102,7 @@ class CommunityProfileScreen extends StatelessWidget {
         _SocialCard(
           title: 'Bobzie X',
           subtitle: 'Official Youtube Channel • Co-Creator & Concept',
-          icon: Icons.play_circle_fill_rounded,
+          icon: FontAwesomeIcons.youtube,
           iconColor: const Color(0xFFFF0000),
           onTap: () => _openUrl(context, 'https://youtube.com/@bobziex'),
         ),
@@ -120,19 +124,19 @@ class CommunityProfileScreen extends StatelessWidget {
         _SocialCard(
           title: 'WhatsApp Channel',
           subtitle: 'Get latest 3D Models, Jerseys & Kit updates',
-          icon: Icons.chat_bubble_outline_rounded,
+          icon: FontAwesomeIcons.whatsapp,
           iconColor: const Color(0xFF25D366),
-          onTap: () => _openUrl(context, 'https://whatsapp.com/channel/example'),
+          onTap: () => _openUrl(context, 'https://whatsapp.com/channel/0029VbD0oGa6GcGJfGkcuw1Y'),
         ),
         const SizedBox(height: 10),
 
-        // Telegram Group Card
+        // Instagram Profile Card
         _SocialCard(
-          title: 'Telegram Creators Hub',
-          subtitle: 'Share custom 3D models & jersey textures with community',
-          icon: Icons.send_rounded,
-          iconColor: const Color(0xFF0088CC),
-          onTap: () => _openUrl(context, 'https://t.me/example'),
+          title: 'Instagram',
+          subtitle: 'Follow @Bobzie_X for the latest updates & designs',
+          icon: FontAwesomeIcons.instagram,
+          iconColor: const Color(0xFFE1306C),
+          onTap: () => _openUrl(context, 'https://instagram.com/Bobzie_X'),
         ),
       ],
     );

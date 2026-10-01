@@ -40,19 +40,22 @@ class ModelStorageService {
   }
 
   void _ensureDefaultModel() {
-    const defaultAssetPath = 'assets/models/player_model.glb';
-    final hasDefault = _models.any((m) => m.id == 'default_dummy_player');
+    // Remove old generic player from saved list if it exists
+    _models.removeWhere((m) => m.id == 'default_dummy_player');
+
+    const defaultAssetPath = 'assets/models/coin.glb';
+    final hasDefault = _models.any((m) => m.id == '__default_coin__');
     if (!hasDefault) {
       _models.insert(
         0,
         Imported3DModel(
-          id: 'default_dummy_player',
-          title: 'Default Generic Player',
+          id: '__default_coin__',
+          title: 'Bobzie X Coin',
           filePath: defaultAssetPath,
           isAsset: true,
-          sizeBytes: 1676,
+          sizeBytes: 220184,
           addedDate: DateTime.now(),
-          category: 'Standard Mannequin',
+          category: 'Default',
         ),
       );
     }
@@ -64,6 +67,25 @@ class ModelStorageService {
       final indexFile = File(p.join(docDir.path, 'models_index.json'));
       await indexFile.writeAsString(Imported3DModel.encodeList(_models));
     } catch (_) {}
+  }
+
+  Future<void> saveLastSelectedModelId(String id) async {
+    try {
+      final docDir = await getApplicationDocumentsDirectory();
+      final file = File(p.join(docDir.path, 'last_selected_model.txt'));
+      await file.writeAsString(id);
+    } catch (_) {}
+  }
+
+  Future<String?> getLastSelectedModelId() async {
+    try {
+      final docDir = await getApplicationDocumentsDirectory();
+      final file = File(p.join(docDir.path, 'last_selected_model.txt'));
+      if (await file.exists()) {
+        return await file.readAsString();
+      }
+    } catch (_) {}
+    return null;
   }
 
   Future<Imported3DModel?> pickAndImportLocalModel() async {

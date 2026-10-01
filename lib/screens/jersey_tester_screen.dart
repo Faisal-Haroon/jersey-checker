@@ -33,22 +33,46 @@ class _JerseyTesterScreenState extends State<JerseyTesterScreen> {
   final ShowcaseScreenshotService _screenshotService = ShowcaseScreenshotService();
   final ModelStorageService _modelStorage = ModelStorageService();
   
-  Imported3DModel? _activeModel;
+  // Default coin shown on every app open
+  static final Imported3DModel _defaultCoinModel = Imported3DModel(
+    id: '__default_coin__',
+    title: 'Bobzie X Coin',
+    filePath: 'assets/models/coin.glb',
+    isAsset: true,
+    sizeBytes: 0,
+    addedDate: DateTime(2024),
+    category: 'Default',
+  );
+
+  late Imported3DModel _activeModel;
   bool _isCapturing = false;
-  String _cameraOrbit = '0deg 75deg 105%';
+  bool _isAutoRotateEnabled = true;
+  String _cameraOrbit = '0deg 75deg 250%';
 
   @override
   void initState() {
     super.initState();
+    _activeModel = _defaultCoinModel; // Always start with coin
     _initModels();
   }
 
   Future<void> _initModels() async {
     await _modelStorage.init();
-    if (mounted && _modelStorage.models.isNotEmpty) {
-      setState(() {
-        _activeModel = _modelStorage.models.first;
-      });
+    
+    // Check if user previously selected a model and load it
+    final lastModelId = await _modelStorage.getLastSelectedModelId();
+    if (lastModelId != null && mounted) {
+      try {
+        final lastModel = _modelStorage.models.firstWhere((m) => m.id == lastModelId);
+        setState(() {
+          _activeModel = lastModel;
+          _cameraOrbit = lastModel.id == '__default_coin__'
+              ? '0deg 75deg 250%'
+              : '0deg 75deg 105%';
+        });
+      } catch (_) {
+        // Fallback to coin if the last selected model was deleted
+      }
     }
   }
 
@@ -66,11 +90,16 @@ class _JerseyTesterScreenState extends State<JerseyTesterScreen> {
       builder: (ctx) => FractionallySizedBox(
         heightFactor: 0.75,
         child: ModelPickerSheet(
-          selectedModelId: _activeModel?.id ?? '',
+          selectedModelId: _activeModel.id,
           onSelectModel: (model) {
             setState(() {
               _activeModel = model;
+              // Each model type has its own ideal zoom
+              _cameraOrbit = model.id == '__default_coin__'
+                  ? '0deg 75deg 250%'
+                  : '0deg 75deg 105%';
             });
+            _modelStorage.saveLastSelectedModelId(model.id); // Save preference
             widget.onResetView();
           },
         ),
@@ -80,6 +109,8 @@ class _JerseyTesterScreenState extends State<JerseyTesterScreen> {
 
   Future<void> _handleTakeShowcase() async {
     setState(() => _isCapturing = true);
+    // Give time for UI to build the watermark before capturing
+    await Future.delayed(const Duration(milliseconds: 100));
     try {
       final imageBytes = await _screenshotService.captureShowcase();
       if (!mounted) return;
@@ -116,12 +147,9 @@ class _JerseyTesterScreenState extends State<JerseyTesterScreen> {
                 children: [
                   Icon(Icons.camera_alt, color: AppTheme.primaryBlue),
                   SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Showcase Ready',
-                      style: TextStyle(color: AppTheme.textMain, fontSize: 18),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  Text(
+                    'Captured',
+                    style: TextStyle(color: AppTheme.textMain, fontSize: 18, fontWeight: FontWeight.w800),
                   ),
                 ],
               ),
@@ -132,49 +160,62 @@ class _JerseyTesterScreenState extends State<JerseyTesterScreen> {
                     borderRadius: BorderRadius.circular(12),
                     child: Image.memory(
                       imageBytes,
-                      height: 240,
+                      height: 260,
                       fit: BoxFit.contain,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Your 3D jersey showcase screenshot is captured!',
-                    style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
-                    textAlign: TextAlign.center,
-                  ),
                 ],
               ),
+              actionsAlignment: MainAxisAlignment.spaceEvenly,
+              actionsPadding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
               actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text('Close'),
-                ),
-                OutlinedButton.icon(
-                  onPressed: isSaving
-                      ? null
-                      : () async {
-                          setDialogState(() => isSaving = true);
-                          final success =
-                              await _screenshotService.saveToGallery(imageBytes);
-                          setDialogState(() => isSaving = false);
-                          if (ctx.mounted) {
-                            _showSnackBar(
-                              success
-                                  ? 'Saved to Gallery successfully!'
-                                  : 'Could not save to gallery. Check permissions.',
-                            );
-                          }
-                        },
-                  icon: const Icon(Icons.download),
-                  label: Text(isSaving ? 'Saving...' : 'Save Gallery'),
-                ),
-                FilledButton.icon(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    _screenshotService.shareShowcase(imageBytes);
-                  },
-                  icon: const Icon(Icons.share),
-                  label: const Text('Share'),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: () {
+                              Navigator.of(ctx).pop();
+                              _screenshotService.shareShowcase(imageBytes);
+                            },
+                            icon: const Icon(Icons.share, size: 18),
+                            label: const Text('Share'),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: isSaving
+                                ? null
+                                : () async {
+                                    setDialogState(() => isSaving = true);
+                                    final success =
+                                        await _screenshotService.saveToGallery(imageBytes);
+                                    setDialogState(() => isSaving = false);
+                                    if (ctx.mounted) {
+                                      _showSnackBar(
+                                        success
+                                            ? 'Saved to Gallery successfully!'
+                                            : 'Could not save to gallery. Check permissions.',
+                                      );
+                                    }
+                                  },
+                            icon: const Icon(Icons.download, size: 17),
+                            label: Text(isSaving ? 'Saving' : 'Save'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(),
+                        child: const Text('Cancel', style: TextStyle(color: AppTheme.textMuted)),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -235,11 +276,9 @@ class _JerseyTesterScreenState extends State<JerseyTesterScreen> {
       ''';
     }
 
-    final modelSrc = _activeModel == null
-        ? 'assets/models/player_model.glb'
-        : _activeModel!.isAsset
-            ? _activeModel!.filePath
-            : 'file://${_activeModel!.filePath}';
+    final modelSrc = _activeModel.isAsset
+        ? _activeModel.filePath
+        : 'file://${_activeModel.filePath}';
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -328,34 +367,82 @@ class _JerseyTesterScreenState extends State<JerseyTesterScreen> {
                           end: Alignment.bottomCenter,
                         ),
                       ),
-                      child: ShowcaseOverlay(
-                        child: ModelViewer(
-                          key: ValueKey('$modelSrc-${widget.viewerKey}-${widget.selectedJersey?.name}-$_cameraOrbit'),
-                          id: 'jersey-3d-player-viewer',
-                          src: modelSrc,
-                          alt: '3D Kit Model Viewer',
-                          autoRotate: false,
-                          cameraControls: true,
-                          cameraOrbit: _cameraOrbit,
-                          touchAction: TouchAction.panY,
-                          backgroundColor: Colors.transparent,
-                          relatedJs: relatedJs,
+                      child: CustomPaint(
+                        painter: const _BlenderGridPainter(),
+                        child: ShowcaseOverlay(
+                          showWatermark: _isCapturing,
+                          child: ModelViewer(
+                            key: ValueKey('$modelSrc-${widget.viewerKey}-${widget.selectedJersey?.name}-$_cameraOrbit-$_isAutoRotateEnabled'),
+                            id: 'jersey-3d-player-viewer',
+                            src: modelSrc,
+                            alt: '3D Kit Model Viewer',
+                            autoRotate: true,
+                            autoRotateDelay: 0,
+                            rotationPerSecond: _isAutoRotateEnabled ? '15deg' : '0deg',
+                            cameraControls: true,
+                            cameraOrbit: _cameraOrbit,
+                            minCameraOrbit: 'auto auto 100%',
+                            maxCameraOrbit: 'auto auto 600%',
+                            touchAction: TouchAction.panY,
+                            backgroundColor: Colors.transparent,
+                            relatedJs: relatedJs,
+                          ),
                         ),
                       ),
                     ),
                   ),
 
-                  // 2. UI OVERLAY BUTTONS
                   Positioned(
                     top: 10,
                     right: 10,
-                    child: IconButton.filledTonal(
-                      onPressed: () {
-                        _setAngle('0deg 75deg 105%');
-                        widget.onResetView();
-                      },
-                      icon: const Icon(Icons.refresh, size: 18),
-                      tooltip: 'Reset Camera',
+                    child: Column(
+                      children: [
+                        IconButton.filledTonal(
+                          onPressed: () {
+                            _setAngle(_activeModel.id == '__default_coin__'
+                                ? '0deg 75deg 250%'
+                                : '0deg 75deg 105%');
+                            widget.onResetView();
+                          },
+                          icon: const Icon(Icons.refresh, size: 18),
+                          tooltip: 'Reset Camera',
+                        ),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isAutoRotateEnabled = !_isAutoRotateEnabled;
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            width: 38,
+                            height: 38,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _isAutoRotateEnabled
+                                  ? AppTheme.primaryBlue
+                                  : Colors.grey.shade400,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Text(
+                              '360°',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
@@ -445,4 +532,39 @@ class _AngleButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class _BlenderGridPainter extends CustomPainter {
+  const _BlenderGridPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.04)
+      ..strokeWidth = 1.0;
+
+    final axisPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.12)
+      ..strokeWidth = 1.5;
+
+    final double step = 40.0;
+    
+    final centerX = size.width / 2;
+    final centerY = size.height / 2;
+
+    // Draw vertical lines
+    for (double i = 0; centerX + i < size.width; i += step) {
+      canvas.drawLine(Offset(centerX + i, 0), Offset(centerX + i, size.height), i == 0 ? axisPaint : paint);
+      if (i > 0) canvas.drawLine(Offset(centerX - i, 0), Offset(centerX - i, size.height), paint);
+    }
+    
+    // Draw horizontal lines
+    for (double i = 0; centerY + i < size.height; i += step) {
+      canvas.drawLine(Offset(0, centerY + i), Offset(size.width, centerY + i), i == 0 ? axisPaint : paint);
+      if (i > 0) canvas.drawLine(Offset(0, centerY - i), Offset(size.width, centerY - i), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

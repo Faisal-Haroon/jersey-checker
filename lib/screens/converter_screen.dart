@@ -82,7 +82,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
     if (widget.files.isEmpty) {
       _showSnackBar(_mode == ConversionMode.pngToBytes
           ? 'Select at least one PNG file first.'
-          : 'Select at least one .bytes file first.');
+          : 'Select at least one file first.');
       return;
     }
 
@@ -236,7 +236,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'PNG → .bytes',
+                          'PNG → File',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
@@ -279,7 +279,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '.bytes → PNG',
+                          'File → PNG',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
@@ -309,7 +309,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
             ),
             const SizedBox(height: 5),
             Text(
-              isPngToBytes ? 'PNG to .bytes' : '.bytes to PNG',
+              isPngToBytes ? 'PNG to File' : 'File to PNG',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: AppTheme.textMain,
@@ -318,8 +318,8 @@ class _ConverterScreenState extends State<ConverterScreen> {
             const SizedBox(height: 4),
             Text(
               isPngToBytes
-                  ? 'Convert jersey textures to binary format'
-                  : 'Extract PNG images from game .bytes files',
+                  ? 'Convert PNG images to binary format'
+                  : 'Extract PNG images from game files',
               style: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
             ),
           ],
@@ -358,7 +358,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  isPngToBytes ? 'Tap to Add PNG Files' : 'Tap to Add .bytes Files',
+                  isPngToBytes ? 'Tap to Add PNG Files' : 'Tap to Add Files',
                   style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -367,8 +367,8 @@ class _ConverterScreenState extends State<ConverterScreen> {
                 const SizedBox(height: 3),
                 Text(
                   isPngToBytes
-                      ? 'Select one or more jersey textures'
-                      : 'Select one or more binary byte files',
+                      ? 'Select one or more PNG image files'
+                      : 'Select one or more binary files',
                   style: const TextStyle(fontSize: 12, color: AppTheme.textMuted),
                 ),
               ],
@@ -586,7 +586,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                         const SizedBox(width: 8),
                         Text(
                             isPngToBytes
-                                ? 'Convert to .bytes'
+                                ? 'Convert to File'
                                 : 'Convert to PNG',
                             style: const TextStyle(
                                 fontSize: 16,
@@ -600,6 +600,5 @@ class _ConverterScreenState extends State<ConverterScreen> {
       ],
     );
   }
-}
 }
 

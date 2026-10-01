@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ShowcaseOverlay extends StatelessWidget {
   const ShowcaseOverlay({
@@ -7,81 +7,101 @@ class ShowcaseOverlay extends StatelessWidget {
     required this.child,
     this.watermarkText = '',
     this.showBadge = false,
+    this.showWatermark = false,
   });
 
   final Widget child;
   final String watermarkText;
   final bool showBadge;
+  final bool showWatermark;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         child,
-        if (showBadge)
+
+        // ── Premium Watermark — Bottom Right ─────────────
+        if (showWatermark)
           Positioned(
-            top: 12,
-            left: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: AppTheme.primaryBlue.withValues(alpha: 0.3),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.sports_cricket,
-                    size: 14,
-                    color: AppTheme.primaryBlue,
-                  ),
-                  SizedBox(width: 6),
-                  Text(
-                    'KIT PREVIEW',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.2,
-                      color: AppTheme.textMain,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        if (watermarkText.isNotEmpty)
-          Positioned(
-            bottom: 12,
-            right: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.85),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: AppTheme.border),
-              ),
-              child: Text(
-                watermarkText,
-                style: const TextStyle(
-                  fontSize: 10,
-                  letterSpacing: 1.2,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.textMuted,
-                ),
-              ),
-            ),
+            bottom: 14,
+            right: 14,
+            child: _PremiumWatermark(),
           ),
       ],
+    );
+  }
+}
+
+// ── PREMIUM WATERMARK WIDGET ────────────────────────────────
+class _PremiumWatermark extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        // Frosted glass / dark translucent look
+        color: Colors.black.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.18),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.35),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icon block
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2563EB).withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: const Icon(
+              FontAwesomeIcons.googlePlay,
+              color: Colors.white,
+              size: 13,
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // Text block
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Jersey Studio',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                  height: 1.1,
+                ),
+              ),
+              const SizedBox(height: 1),
+              const Text(
+                'GET IT ON PLAYSTORE',
+                style: TextStyle(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF93C5FD),
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
