@@ -94,7 +94,8 @@ class CommunityProfileScreen extends StatelessWidget {
           subtitle: 'Official Youtube Channel • Lead App Developer',
           icon: FontAwesomeIcons.youtube,
           iconColor: const Color(0xFFFF0000),
-          onTap: () => _openUrl(context, 'https://youtube.com/@baltistanigamer'),
+          onTap: () =>
+              _openUrl(context, 'https://youtube.com/@baltistanigamer'),
         ),
         const SizedBox(height: 10),
 
@@ -126,7 +127,10 @@ class CommunityProfileScreen extends StatelessWidget {
           subtitle: 'Get latest 3D Models, Jerseys & Kit updates',
           icon: FontAwesomeIcons.whatsapp,
           iconColor: const Color(0xFF25D366),
-          onTap: () => _openUrl(context, 'https://whatsapp.com/channel/0029VbD0oGa6GcGJfGkcuw1Y'),
+          onTap: () => _openUrl(
+            context,
+            'https://whatsapp.com/channel/0029VbD0oGa6GcGJfGkcuw1Y',
+          ),
         ),
         const SizedBox(height: 10),
 

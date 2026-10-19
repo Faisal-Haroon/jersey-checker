@@ -1,28 +1,17 @@
 import '../models/selected_file.dart';
 
 class TextureValidationResult {
-  const TextureValidationResult({
-    required this.isValid,
-    this.errorMessage,
-  });
+  const TextureValidationResult({required this.isValid, this.errorMessage});
 
   final bool isValid;
   final String? errorMessage;
 }
 
 class TextureValidationService {
-  // Max file size limit for mobile memory safety: 15 MB
-  static const int maxFileSizeBytes = 15 * 1024 * 1024;
+  // Max file size limit for mobile memory safety: 25 MB
+  static const int maxFileSizeBytes = 25 * 1024 * 1024;
 
   static TextureValidationResult validateTexture(SelectedJerseyFile file) {
-    final name = file.name.toLowerCase();
-    if (!name.endsWith('.png') && !name.endsWith('.jpg') && !name.endsWith('.jpeg') && !name.endsWith('.webp')) {
-      return const TextureValidationResult(
-        isValid: false,
-        errorMessage: 'Invalid file format. Only PNG, JPG, and WEBP image textures are supported.',
-      );
-    }
-
     if (file.bytes.isEmpty) {
       return const TextureValidationResult(
         isValid: false,
@@ -30,11 +19,35 @@ class TextureValidationService {
       );
     }
 
+    final name = file.name.toLowerCase();
+    final validExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.jfif', '.bmp'];
+    final hasValidExt = validExtensions.any((ext) => name.endsWith(ext));
+
+    if (!hasValidExt) {
+      // Magic bytes check for images without standard extension
+      if (file.bytes.length >= 3) {
+        final isPng = file.bytes[0] == 0x89 && file.bytes[1] == 0x50;
+        final isJpg = file.bytes[0] == 0xFF && file.bytes[1] == 0xD8;
+        final isWebp = file.bytes.length >= 12 &&
+            file.bytes[0] == 0x52 &&
+            file.bytes[1] == 0x49 &&
+            file.bytes[2] == 0x46 &&
+            file.bytes[3] == 0x46;
+        if (!isPng && !isJpg && !isWebp) {
+          return const TextureValidationResult(
+            isValid: false,
+            errorMessage:
+                'Invalid file format. Only PNG, JPG, and WEBP image textures are supported.',
+          );
+        }
+      }
+    }
+
     if (file.size > maxFileSizeBytes) {
       return const TextureValidationResult(
         isValid: false,
         errorMessage:
-            'Texture file size is too large (max 15MB). Please choose a smaller image texture.',
+            'Texture file size is too large (max 25MB). Please choose a smaller image texture.',
       );
     }
 
@@ -52,7 +65,8 @@ class TextureValidationService {
     if (file.size > maxFileSizeBytes) {
       return const TextureValidationResult(
         isValid: false,
-        errorMessage: 'File size is too large (max 15MB). Please choose a smaller file.',
+        errorMessage:
+            'File size is too large (max 15MB). Please choose a smaller file.',
       );
     }
 

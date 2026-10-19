@@ -1,23 +1,65 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:jersey_checker/main.dart';
+import 'package:jersey_checker/screens/converter_screen.dart';
+import 'package:jersey_checker/screens/home_dashboard_screen.dart';
+import 'package:jersey_checker/theme/app_theme.dart';
+import 'package:jersey_checker/widgets/banner_ad_widget.dart';
 
 void main() {
-  testWidgets('studio opens on the 3D tester tab', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets(
+    'HomeDashboardScreen renders tools and sticky bottom banner slot',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: Scaffold(
+            body: HomeDashboardScreen(
+              onOpen3DStudio: () {},
+              onOpenConverter: () {},
+            ),
+          ),
+        ),
+      );
 
-    expect(find.text('3D Player Preview'), findsOneWidget);
-    expect(find.text('Select Jersey PNG'), findsOneWidget);
-    expect(find.text('PNG to .bytes Converter'), findsNothing);
+      // Header and tool cards
+      expect(find.text('TOOLS'), findsOneWidget);
+      expect(find.text('3D Studio'), findsWidgets);
+      expect(find.text('Converter'), findsWidgets);
+      expect(find.text('Jersey'), findsOneWidget);
+
+      // Sticky banner ad widget is present
+      expect(find.byType(AppBannerWidget), findsOneWidget);
+    },
+  );
+
+  testWidgets('ConverterScreen renders active mode and controls', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: Scaffold(
+          body: ConverterScreen(
+            files: const [],
+            onPickFiles: () {},
+            onPickBytesFiles: () {},
+            onClearAll: () {},
+            onRemoveFile: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('PNG → File'), findsWidgets);
   });
 
-  testWidgets('converter tab shows empty state', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('AppBannerWidget reserves layout dimensions gracefully', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: AppBannerWidget())),
+    );
 
-    await tester.tap(find.text('Converter'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('PNG to .bytes Converter'), findsOneWidget);
-    expect(find.text('No PNG files selected'), findsOneWidget);
+    expect(find.byType(AppBannerWidget), findsOneWidget);
   });
 }

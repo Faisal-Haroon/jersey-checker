@@ -14,7 +14,9 @@ class AppDrawer extends StatelessWidget {
   final ValueChanged<int> onSelectTab;
 
   void _openPrivacyPolicy(BuildContext context) async {
-    final url = Uri.parse('https://baltistanigamer1.blogspot.com/p/jersey-checker-studio-privacy-policy.html');
+    final url = Uri.parse(
+      'https://baltistanigamer1.blogspot.com/p/jersey-checker-studio-privacy-policy.html',
+    );
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
@@ -38,14 +40,18 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _rateApp(BuildContext context) async {
-    final url = Uri.parse('https://play.google.com/store/apps/details?id=com.bobziex.jerseychecker');
+    final url = Uri.parse(
+      'https://play.google.com/store/apps/details?id=com.bobziex.jerseychecker',
+    );
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Could not open Play Store. Please search for us manually!'),
+            content: Text(
+              'Could not open Play Store. Please search for us manually!',
+            ),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -65,16 +71,18 @@ class AppDrawer extends StatelessWidget {
           children: [
             // Drawer Header
             Container(
-              padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 24, 20, 26),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                MediaQuery.of(context).padding.top + 24,
+                20,
+                26,
+              ),
               width: double.infinity,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF0F2952),
-                    Color(0xFF1648A8),
-                  ],
+                  colors: [Color(0xFF0F2952), Color(0xFF1648A8)],
                 ),
               ),
               child: Column(
@@ -85,7 +93,9 @@ class AppDrawer extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Image.asset(
                       'assets/TransparentLogo.png',
@@ -116,85 +126,85 @@ class AppDrawer extends StatelessWidget {
                 ],
               ),
             ),
-              const SizedBox(height: 12),
-              
-              // Navigation Links
-              _DrawerTile(
-                icon: Icons.home_outlined,
-                selectedIcon: Icons.home,
-                title: 'Home',
-                isSelected: selectedIndex == 0,
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelectTab(0);
-                },
-              ),
-              _DrawerTile(
-                icon: Icons.view_in_ar_outlined,
-                selectedIcon: Icons.view_in_ar,
-                title: '3D Studio',
-                isSelected: selectedIndex == 1,
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelectTab(1);
-                },
-              ),
-              _DrawerTile(
-                icon: Icons.swap_horiz_outlined,
-                selectedIcon: Icons.swap_horiz,
-                title: 'Converter',
-                isSelected: selectedIndex == 2,
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelectTab(2);
-                },
-              ),
-              _DrawerTile(
-                icon: Icons.person_outline_rounded,
-                selectedIcon: Icons.person_rounded,
-                title: 'Community',
-                isSelected: selectedIndex == 3,
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelectTab(3);
-                },
-              ),
-              
-              const Divider(color: AppTheme.border, indent: 16, endIndent: 16),
-              
-              // Extra Options
-              _DrawerTile(
-                icon: Icons.privacy_tip_outlined,
-                selectedIcon: Icons.privacy_tip,
-                title: 'Privacy Policy',
-                isSelected: false,
-                onTap: () {
-                  Navigator.pop(context);
-                  _openPrivacyPolicy(context);
-                },
-              ),
-              _DrawerTile(
-                icon: Icons.share_outlined,
-                selectedIcon: Icons.share,
-                title: 'Share with Friends',
-                isSelected: false,
-                onTap: () {
-                  Navigator.pop(context);
-                  _shareApp(context);
-                },
-              ),
-              _DrawerTile(
-                icon: Icons.star_rate_outlined,
-                selectedIcon: Icons.star_rate,
-                title: 'Rate Us',
-                isSelected: false,
-                onTap: () {
-                  Navigator.pop(context);
-                  _rateApp(context);
-                },
-              ),
+            const SizedBox(height: 12),
 
-              const Spacer(),
+            // Navigation Links
+            _DrawerTile(
+              icon: Icons.home_outlined,
+              selectedIcon: Icons.home,
+              title: 'Home',
+              isSelected: selectedIndex == 0,
+              onTap: () {
+                Navigator.pop(context);
+                onSelectTab(0);
+              },
+            ),
+            _DrawerTile(
+              icon: Icons.view_in_ar_outlined,
+              selectedIcon: Icons.view_in_ar,
+              title: '3D Studio',
+              isSelected: selectedIndex == 1,
+              onTap: () {
+                Navigator.pop(context);
+                onSelectTab(1);
+              },
+            ),
+            _DrawerTile(
+              icon: Icons.swap_horiz_outlined,
+              selectedIcon: Icons.swap_horiz,
+              title: 'Converter',
+              isSelected: selectedIndex == 2,
+              onTap: () {
+                Navigator.pop(context);
+                onSelectTab(2);
+              },
+            ),
+            _DrawerTile(
+              icon: Icons.person_outline_rounded,
+              selectedIcon: Icons.person_rounded,
+              title: 'Community',
+              isSelected: selectedIndex == 3,
+              onTap: () {
+                Navigator.pop(context);
+                onSelectTab(3);
+              },
+            ),
+
+            const Divider(color: AppTheme.border, indent: 16, endIndent: 16),
+
+            // Extra Options
+            _DrawerTile(
+              icon: Icons.privacy_tip_outlined,
+              selectedIcon: Icons.privacy_tip,
+              title: 'Privacy Policy',
+              isSelected: false,
+              onTap: () {
+                Navigator.pop(context);
+                _openPrivacyPolicy(context);
+              },
+            ),
+            _DrawerTile(
+              icon: Icons.share_outlined,
+              selectedIcon: Icons.share,
+              title: 'Share with Friends',
+              isSelected: false,
+              onTap: () {
+                Navigator.pop(context);
+                _shareApp(context);
+              },
+            ),
+            _DrawerTile(
+              icon: Icons.star_rate_outlined,
+              selectedIcon: Icons.star_rate,
+              title: 'Rate Us',
+              isSelected: false,
+              onTap: () {
+                Navigator.pop(context);
+                _rateApp(context);
+              },
+            ),
+
+            const Spacer(),
           ],
         ),
       ),
@@ -224,7 +234,9 @@ class _DrawerTile extends StatelessWidget {
       child: ListTile(
         dense: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        tileColor: isSelected ? AppTheme.primaryBlue.withValues(alpha: 0.12) : Colors.transparent,
+        tileColor: isSelected
+            ? AppTheme.primaryBlue.withValues(alpha: 0.12)
+            : Colors.transparent,
         leading: Icon(
           isSelected ? selectedIcon : icon,
           color: isSelected ? AppTheme.primaryBlue : AppTheme.textMuted,

@@ -8,12 +8,14 @@ class ShowcaseOverlay extends StatelessWidget {
     this.watermarkText = '',
     this.showBadge = false,
     this.showWatermark = false,
+    this.watermarkTop,
   });
 
   final Widget child;
   final String watermarkText;
   final bool showBadge;
   final bool showWatermark;
+  final double? watermarkTop;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,8 @@ class ShowcaseOverlay extends StatelessWidget {
         // ── Premium Watermark — Bottom Right ─────────────
         if (showWatermark)
           Positioned(
-            bottom: 14,
+            top: watermarkTop,
+            bottom: watermarkTop == null ? 14 : null,
             right: 14,
             child: _PremiumWatermark(),
           ),
@@ -38,67 +41,39 @@ class _PremiumWatermark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        // Frosted glass / dark translucent look
-        color: Colors.black.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.black.withValues(alpha: 0.65),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.18),
-          width: 1,
+          width: 0.8,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Icon block
-          Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2563EB).withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: const Icon(
-              FontAwesomeIcons.googlePlay,
-              color: Colors.white,
-              size: 13,
-            ),
+          Icon(
+            FontAwesomeIcons.googlePlay,
+            color: Color(0xFF60A5FA),
+            size: 9.5,
           ),
-          const SizedBox(width: 8),
-
-          // Text block
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Jersey Studio',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  letterSpacing: 0.2,
-                  height: 1.1,
-                ),
-              ),
-              const SizedBox(height: 1),
-              const Text(
-                'GET IT ON PLAYSTORE',
-                style: TextStyle(
-                  fontSize: 7.5,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF93C5FD),
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
+          SizedBox(width: 5),
+          Text(
+            'Jersey Checker',
+            style: TextStyle(
+              fontSize: 9.5,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: 0.3,
+            ),
           ),
         ],
       ),

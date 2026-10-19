@@ -72,10 +72,7 @@ class AppInfoSheet extends StatelessWidget {
                     SizedBox(height: 2),
                     Text(
                       '3D Model Viewer & File Converter',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppTheme.textMuted,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
                     ),
                   ],
                 ),
@@ -134,7 +131,10 @@ class AppInfoSheet extends StatelessWidget {
                         role: 'Developer & Creator',
                         icon: Icons.play_circle_fill_rounded,
                         color: const Color(0xFFFF0000),
-                        onTap: () => _openUrl(context, 'https://youtube.com/@baltistanigamer'),
+                        onTap: () => _openUrl(
+                          context,
+                          'https://youtube.com/@baltistanigamer',
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -144,7 +144,8 @@ class AppInfoSheet extends StatelessWidget {
                         role: 'Co-Creator & Concept',
                         icon: Icons.play_circle_fill_rounded,
                         color: const Color(0xFFFF0000),
-                        onTap: () => _openUrl(context, 'https://youtube.com/@bobziex'),
+                        onTap: () =>
+                            _openUrl(context, 'https://youtube.com/@bobziex'),
                       ),
                     ),
                   ],

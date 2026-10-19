@@ -7,7 +7,9 @@ import 'package:path_provider/path_provider.dart';
 
 class GlbTextureExtractorService {
   /// Extract embedded PNG/JPEG textures from a local .glb file
-  static Future<List<Uint8List>> extractTexturesFromGlbFile(File glbFile) async {
+  static Future<List<Uint8List>> extractTexturesFromGlbFile(
+    File glbFile,
+  ) async {
     final bytes = await glbFile.readAsBytes();
     return extractTexturesFromGlbBytes(bytes);
   }
@@ -59,7 +61,8 @@ class GlbTextureExtractorService {
       if (image is! Map<String, dynamic>) continue;
 
       // Handle embedded base64 Data URI
-      if (image.containsKey('uri') && image['uri'].toString().startsWith('data:image')) {
+      if (image.containsKey('uri') &&
+          image['uri'].toString().startsWith('data:image')) {
         final uriStr = image['uri'].toString();
         final base64Data = uriStr.split(',').last;
         extractedTextures.add(base64Decode(base64Data));
@@ -67,7 +70,9 @@ class GlbTextureExtractorService {
       }
 
       // Handle BufferView binary slice
-      if (image.containsKey('bufferView') && binBytes != null && bufferViews != null) {
+      if (image.containsKey('bufferView') &&
+          binBytes != null &&
+          bufferViews != null) {
         final bufferViewIdx = image['bufferView'] as int;
         if (bufferViewIdx >= 0 && bufferViewIdx < bufferViews.length) {
           final bView = bufferViews[bufferViewIdx] as Map<String, dynamic>;
@@ -75,7 +80,10 @@ class GlbTextureExtractorService {
           final byteLength = bView['byteLength'] as int;
 
           if (byteOffset + byteLength <= binBytes.length) {
-            final imgSlice = binBytes.sublist(byteOffset, byteOffset + byteLength);
+            final imgSlice = binBytes.sublist(
+              byteOffset,
+              byteOffset + byteLength,
+            );
             extractedTextures.add(imgSlice);
           }
         }
@@ -86,7 +94,10 @@ class GlbTextureExtractorService {
   }
 
   /// Save ALL extracted textures directly to device gallery/downloads
-  static Future<int> saveAllExtractedTexturesToGallery(List<Uint8List> texturesList, String modelTitle) async {
+  static Future<int> saveAllExtractedTexturesToGallery(
+    List<Uint8List> texturesList,
+    String modelTitle,
+  ) async {
     if (texturesList.isEmpty) return 0;
     try {
       final hasAccess = await Gal.hasAccess(toAlbum: true);
@@ -100,7 +111,8 @@ class GlbTextureExtractorService {
       int savedCount = 0;
 
       for (int i = 0; i < texturesList.length; i++) {
-        final fileName = '${sanitizedTitle}_Texture_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.png';
+        final fileName =
+            '${sanitizedTitle}_Texture_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.png';
         final filePath = '${tempDir.path}/$fileName';
 
         final file = File(filePath);

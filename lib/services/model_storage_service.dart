@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -101,7 +101,9 @@ class ModelStorageService {
 
     final ext = p.extension(fileName).toLowerCase();
     if (ext != '.glb' && ext != '.gltf') {
-      throw Exception('Invalid file type. Please select a .glb or .gltf 3D model file.');
+      throw Exception(
+        'Invalid file type. Please select a .glb or .gltf 3D model file.',
+      );
     }
 
     final fileBytes = file.bytes;
@@ -117,7 +119,10 @@ class ModelStorageService {
     }
 
     final sanitizedName = fileName.replaceAll(RegExp(r'[^\w\.-]'), '_');
-    final targetPath = p.join(modelsDir.path, '${DateTime.now().millisecondsSinceEpoch}_$sanitizedName');
+    final targetPath = p.join(
+      modelsDir.path,
+      '${DateTime.now().millisecondsSinceEpoch}_$sanitizedName',
+    );
     final targetFile = File(targetPath);
 
     if (fileBytes != null) {
@@ -141,43 +146,7 @@ class ModelStorageService {
     return newModel;
   }
 
-  Future<Imported3DModel?> downloadModelFromUrl(String url, String customTitle) async {
-    final uri = Uri.parse(url.trim());
-    final response = await http.get(uri);
-    if (response.statusCode != 200) {
-      throw Exception('Failed to download 3D model (HTTP ${response.statusCode})');
-    }
 
-    final bytes = response.bodyBytes;
-    if (bytes.isEmpty) {
-      throw Exception('Downloaded 3D model file is empty.');
-    }
-
-    final docDir = await getApplicationDocumentsDirectory();
-    final modelsDir = Directory(p.join(docDir.path, 'custom_models'));
-    if (!await modelsDir.exists()) {
-      await modelsDir.create(recursive: true);
-    }
-
-    final titleClean = customTitle.trim().isEmpty ? 'Downloaded Model' : customTitle.trim();
-    final targetPath = p.join(modelsDir.path, '${DateTime.now().millisecondsSinceEpoch}_model.glb');
-    final targetFile = File(targetPath);
-    await targetFile.writeAsBytes(bytes);
-
-    final newModel = Imported3DModel(
-      id: 'model_${DateTime.now().millisecondsSinceEpoch}',
-      title: titleClean,
-      filePath: targetPath,
-      isAsset: false,
-      sizeBytes: bytes.length,
-      addedDate: DateTime.now(),
-      category: 'Downloaded Model',
-    );
-
-    _models.add(newModel);
-    await _saveIndex();
-    return newModel;
-  }
 
   Future<bool> deleteModel(String id) async {
     final index = _models.indexWhere((m) => m.id == id);

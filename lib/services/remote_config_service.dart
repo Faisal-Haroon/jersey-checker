@@ -20,7 +20,7 @@ class AppConfig {
     return const AppConfig(
       modelUrl: '',
       modelVersion: '1.0',
-      watermarkText: 'Jersey Studio 3D',
+      watermarkText: 'Jersey Checker 3D',
       minAppVersion: '1.0.0',
     );
   }
@@ -31,7 +31,9 @@ class RemoteConfigService {
 
   /// Get remote or cached GLB model path; falls back to bundled asset if offline
   static Future<String> getActiveModelPath({String? remoteUrl}) async {
-    if (remoteUrl == null || remoteUrl.isEmpty || !remoteUrl.startsWith('http')) {
+    if (remoteUrl == null ||
+        remoteUrl.isEmpty ||
+        !remoteUrl.startsWith('http')) {
       return fallbackModelAsset;
     }
 

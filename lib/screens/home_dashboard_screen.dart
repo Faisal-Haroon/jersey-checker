@@ -1,566 +1,541 @@
 import 'package:flutter/material.dart';
-import '../models/selected_file.dart';
-import '../theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../widgets/banner_ad_widget.dart';
 
 class HomeDashboardScreen extends StatelessWidget {
   const HomeDashboardScreen({
     super.key,
     required this.onOpen3DStudio,
     required this.onOpenConverter,
-    required this.testerJersey,
-    required this.convertedCount,
   });
 
   final VoidCallback onOpen3DStudio;
   final VoidCallback onOpenConverter;
-  final SelectedJerseyFile? testerJersey;
-  final int convertedCount;
+
+  void _launchUrl(String url) {
+    launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 32),
+    return Column(
       children: [
-        // ── HERO BANNER ──────────────────────────────────
-        _HeroBanner(
-          testerJersey: testerJersey,
-          convertedCount: convertedCount,
-        ),
-        const SizedBox(height: 28),
-
-        // ── TOOL CARDS ───────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        // ── SCROLLABLE CARDS BODY ─────────────────────────────
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
             children: [
-              const Text(
-                'TOOLS',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.textMuted,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _ToolCard(
-                      title: '3D Studio',
-                      subtitle: 'Load texture on\n3D model & preview',
-                      icon: Icons.view_in_ar_rounded,
-                      color: AppTheme.primaryBlue,
-                      onTap: onOpen3DStudio,
+              // ── TOP WELCOME BANNER CONTAINER ────────────────
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF0D254C),
+                      Color(0xFF17479E),
+                      Color(0xFF2563EB),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF17479E).withValues(alpha: 0.32),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
                     ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: _ToolCard(
-                      title: 'Converter',
-                      subtitle: 'PNG to File\nbatch convert',
-                      icon: Icons.transform_rounded,
-                      color: const Color(0xFF10B981),
-                      onTap: onOpenConverter,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-
-        // ── QUICK STATS ROW ──────────────────────────────
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              Expanded(
-                child: _MiniStatCard(
-                  icon: Icons.layers_rounded,
-                  label: 'Active Model',
-                  value: testerJersey != null ? testerJersey!.name : 'None',
-                  color: AppTheme.primaryBlue,
+                  ],
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _MiniStatCard(
-                  icon: Icons.check_circle_rounded,
-                  label: 'Converted',
-                  value: '$convertedCount files',
-                  color: const Color(0xFF10B981),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-
-        // ── PRO TIP ──────────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryBlue.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                  color: AppTheme.primaryBlue.withValues(alpha: 0.15)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryBlue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.tips_and_updates_rounded,
-                      color: AppTheme.primaryBlue, size: 20),
-                ),
-                const SizedBox(width: 14),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(22),
+                  child: Stack(
                     children: [
-                      Text(
-                        'How it works',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primaryBlue,
+                      // Subtle decorative ambient glow circles
+                      Positioned(
+                        top: -30,
+                        right: -20,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.08),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 3),
-                      Text(
-                        'Open 3D Studio, load your PNG texture on the model, then use Converter to export it as a .bytes file.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.textMuted,
-                          height: 1.45,
+                      Positioned(
+                        bottom: -40,
+                        left: 40,
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF60A5FA)
+                                .withValues(alpha: 0.12),
+                          ),
+                        ),
+                      ),
+
+                      // Card Content
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3.5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.16),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.28),
+                                      ),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.auto_awesome,
+                                          color: Color(0xFFFDE047),
+                                          size: 11,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'KIT STUDIO',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.white,
+                                            letterSpacing: 0.8,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 7),
+                                  const Text(
+                                    'Welcome to Studio',
+                                    style: TextStyle(
+                                      fontSize: 18.5,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
+                                      letterSpacing: -0.3,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    'Preview jerseys in 3D & convert game files',
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      color: Colors.white.withValues(alpha: 0.88),
+                                      height: 1.25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.16),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.32),
+                                  width: 1.2,
+                                ),
+                              ),
+                              child: Image.asset(
+                                'assets/TransparentLogo.png',
+                                width: 48,
+                                height: 48,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // ── CREATIVE TOOLS SECTION HEADER ───────────────
+              Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3B82F6),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'CREATIVE TOOLS',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF0F172A),
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              // ── ROW 1: 3D STUDIO & CONVERTER ────────────────
+              Row(
+                children: [
+                  // 1. 3D STUDIO CARD
+                  Expanded(
+                    child: _VisualGridCard(
+                      borderColor: const Color(0xFFC7D2FE),
+                      glowColor: const Color(0xFF818CF8),
+                      topLeftWidget: const _IconBox(
+                        icon: Icons.crop_free_rounded,
+                        color: Color(0xFF334155),
+                      ),
+                      centerWidget: Image.asset(
+                        'assets/3d_Studio.webp',
+                        height: 110,
+                        fit: BoxFit.contain,
+                      ),
+                      title: '3D STUDIO',
+                      buttonText: 'Launch →',
+                      buttonGradient: const LinearGradient(
+                        colors: [Color(0xFF93C5FD), Color(0xFF6366F1)],
+                      ),
+                      buttonTextColor: Colors.white,
+                      onTap: onOpen3DStudio,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+
+                  // 2. CONVERTER CARD
+                  Expanded(
+                    child: _VisualGridCard(
+                      borderColor: const Color(0xFFA7F3D0),
+                      glowColor: const Color(0xFF10B981),
+                      topLeftWidget: const _IconBox(
+                        icon: Icons.swap_horiz_rounded,
+                        color: Color(0xFF334155),
+                      ),
+                      centerWidget: Image.asset(
+                        'assets/converter.webp',
+                        height: 110,
+                        fit: BoxFit.contain,
+                      ),
+                      title: 'CONVERTER',
+                      buttonText: 'Convert →',
+                      buttonGradient: const LinearGradient(
+                        colors: [Color(0xFF6EE7B7), Color(0xFF10B981)],
+                      ),
+                      buttonTextColor: const Color(0xFF064E3B),
+                      onTap: onOpenConverter,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 22),
+
+              // ── COMMUNITY & SUPPORT SECTION HEADER ──────────
+              Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3B82F6),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'COMMUNITY & SUPPORT',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF0F172A),
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              // ── ROW 2: CRICKET STORE & RATE US ──────────────
+              Row(
+                children: [
+                  // 3. CRICKET STORE CARD
+                  Expanded(
+                    child: _VisualGridCard(
+                      borderColor: const Color(0xFFC7D2FE),
+                      glowColor: const Color(0xFF818CF8),
+                      verticalSpacing: 8,
+                      buttonVerticalSpacing: 10,
+                      buttonHeight: 34,
+                      cardPadding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                      centerWidget: Image.asset(
+                        'assets/Jersey_app.webp',
+                        height: 95,
+                        fit: BoxFit.contain,
+                      ),
+                      title: 'GC5 JERSEYS',
+                      buttonText: 'Download →',
+                      buttonGradient: const LinearGradient(
+                        colors: [Color(0xFFC4B5FD), Color(0xFFA78BFA)],
+                      ),
+                      buttonTextColor: const Color(0xFF3730A3),
+                      onTap: () => _launchUrl(
+                        'https://play.google.com/store/apps/details?id=com.uswatechnologies.cricketplpstore&hl=en',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+
+                  // 4. RATE US CARD
+                  Expanded(
+                    child: _VisualGridCard(
+                      borderColor: const Color(0xFFFED7AA),
+                      glowColor: const Color(0xFFF59E0B),
+                      verticalSpacing: 8,
+                      buttonVerticalSpacing: 10,
+                      buttonHeight: 34,
+                      cardPadding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                      centerWidget: SizedBox(
+                        height: 95,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Curved Stars on top
+                            Positioned(
+                              top: 6,
+                              child: Image.asset(
+                                'assets/rate.webp',
+                                width: 115,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            // Thumbs-up icon nestled underneath the arched stars
+                            Positioned(
+                              bottom: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(7),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFEF3C7),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFFFDE68A),
+                                    width: 1.5,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFF59E0B)
+                                          .withValues(alpha: 0.22),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.thumb_up_rounded,
+                                  size: 22,
+                                  color: Color(0xFFD97706),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      title: 'RATE US',
+                      buttonText: 'Rate Us →',
+                      buttonGradient: const LinearGradient(
+                        colors: [Color(0xFFFDE68A), Color(0xFFF59E0B)],
+                      ),
+                      buttonTextColor: const Color(0xFF78350F),
+                      onTap: () => _launchUrl(
+                        'https://play.google.com/store/apps/details?id=com.bobziex.jerseychecker&hl=en',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
+
+        // ── STICKY BOTTOM BANNER AD ───────────────────────────
+        const AppBannerWidget(topPadding: 4, bottomPadding: 4),
       ],
     );
   }
 }
 
-// ── HERO BANNER ─────────────────────────────────────────────
-class _HeroBanner extends StatelessWidget {
-  const _HeroBanner({
-    required this.testerJersey,
-    required this.convertedCount,
-  });
-
-  final SelectedJerseyFile? testerJersey;
-  final int convertedCount;
-
-  @override
-  Widget build(BuildContext context) {
-    final screenW = MediaQuery.of(context).size.width;
-
-    return Container(
-      width: double.infinity,
-      clipBehavior: Clip.hardEdge,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(36),
-          bottomRight: Radius.circular(36),
-        ),
-      ),
-      child: Stack(
-        children: [
-          // ── Gradient background ──
-          Container(
-            height: 230,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0.0, 0.5, 1.0],
-                colors: [
-                  Color(0xFF0A1628),
-                  Color(0xFF0F2952),
-                  Color(0xFF1648A8),
-                ],
-              ),
-            ),
-          ),
-
-          // ── Decorative orbs ──
-          Positioned(
-            top: -50,
-            right: -50,
-            child: _Orb(size: 210, opacity: 0.05),
-          ),
-          Positioned(
-            top: 55,
-            right: 35,
-            child: _Orb(size: 90, opacity: 0.07),
-          ),
-          Positioned(
-            bottom: -40,
-            left: screenW * 0.3,
-            child: _Orb(size: 150, opacity: 0.08, color: const Color(0xFF60A5FA)),
-          ),
-          Positioned(
-            bottom: 10,
-            right: -20,
-            child: _Orb(size: 80, opacity: 0.06, color: const Color(0xFF34D399)),
-          ),
-
-          // ── Stripe pattern ──
-          Positioned.fill(
-            child: CustomPaint(painter: _StripePainter()),
-          ),
-
-          // ── Content ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(22, 20, 22, 26),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Top row ──
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // App icon
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.18),
-                            width: 1),
-                      ),
-                      child: Image.asset(
-                        'assets/TransparentLogo.png',
-                        width: 48,
-                        height: 48,
-                        cacheWidth: 150,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-
-                    // Text block
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Version badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 9, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  width: 1),
-                            ),
-                            child: const Text(
-                              'TEXTURE STUDIO',
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFFBFDBFE),
-                                letterSpacing: 1.0,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 7),
-                          const Text(
-                            'Jersey Studio',
-                            style: TextStyle(
-                              fontSize: 27,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              letterSpacing: -1.0,
-                              height: 1.0,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Design  \u2022  Preview  \u2022  Convert',
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: Color(0xFF93C5FD),
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.3,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 22),
-
-                // ── Divider line ──
-                Container(
-                  height: 1,
-                  color: Colors.white.withValues(alpha: 0.08),
-                ),
-                const SizedBox(height: 18),
-
-                // ── Quick action buttons ──
-                Row(
-                  children: [
-                    Expanded(
-                      child: _HeroButton(
-                        icon: Icons.view_in_ar_rounded,
-                        label: '3D Studio',
-                        color: const Color(0xFF60A5FA),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _HeroButton(
-                        icon: Icons.transform_rounded,
-                        label: 'Converter',
-                        color: const Color(0xFF34D399),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── ORB HELPER ──────────────────────────────────────────────
-class _Orb extends StatelessWidget {
-  const _Orb({
-    required this.size,
-    required this.opacity,
-    this.color = Colors.white,
-  });
-
-  final double size;
-  final double opacity;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color.withValues(alpha: opacity),
-      ),
-    );
-  }
-}
-
-// ── HERO BUTTON ─────────────────────────────────────────────
-class _HeroButton extends StatelessWidget {
-  const _HeroButton({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.35), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 14),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── MINI STAT CARD ──────────────────────────────────────────
-class _MiniStatCard extends StatelessWidget {
-  const _MiniStatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppTheme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(9),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: color, size: 18),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: AppTheme.textMuted,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.textMain,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── STRIPE PAINTER ──────────────────────────────────────────
-class _StripePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.025)
-      ..strokeWidth = 32
-      ..style = PaintingStyle.stroke;
-
-    for (double x = -size.height; x < size.width + size.height; x += 55) {
-      canvas.drawLine(
-        Offset(x, 0),
-        Offset(x + size.height, size.height),
-        paint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_StripePainter oldDelegate) => false;
-}
-
-// ── TOOL CARD ───────────────────────────────────────────────
-class _ToolCard extends StatelessWidget {
-  const _ToolCard({
+// ── VISUAL GRID CARD WIDGET ─────────────────────────────────
+class _VisualGridCard extends StatelessWidget {
+  const _VisualGridCard({
+    required this.borderColor,
+    required this.glowColor,
+    required this.centerWidget,
     required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
+    required this.buttonText,
+    required this.buttonGradient,
+    required this.buttonTextColor,
     required this.onTap,
+    this.topLeftWidget,
+    this.verticalSpacing = 12,
+    this.buttonVerticalSpacing = 14,
+    this.buttonHeight = 38,
+    this.cardPadding = const EdgeInsets.fromLTRB(12, 12, 12, 14),
   });
 
+  final Color borderColor;
+  final Color glowColor;
+  final Widget centerWidget;
   final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
+  final String buttonText;
+  final LinearGradient buttonGradient;
+  final Color buttonTextColor;
   final VoidCallback onTap;
+  final Widget? topLeftWidget;
+  final double verticalSpacing;
+  final double buttonVerticalSpacing;
+  final double buttonHeight;
+  final EdgeInsetsGeometry cardPadding;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppTheme.cardColor,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppTheme.border),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: borderColor,
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: glowColor.withValues(alpha: 0.10),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
           ),
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(11),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24),
+          child: Padding(
+            padding: cardPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Visual Graphic with corner widgets overlaid directly on top
+                Stack(
+                  children: [
+                    Center(child: centerWidget),
+                    if (topLeftWidget != null)
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: topLeftWidget!,
+                      ),
+                  ],
                 ),
-                child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.textMain,
+                SizedBox(height: verticalSpacing),
+
+                // Title (Bold uppercase)
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF0F172A),
+                    letterSpacing: 0.3,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppTheme.textMuted,
-                  height: 1.5,
+                SizedBox(height: buttonVerticalSpacing),
+
+                // Gradient Action Button
+                Container(
+                  width: double.infinity,
+                  height: buttonHeight,
+                  decoration: BoxDecoration(
+                    gradient: buttonGradient,
+                    borderRadius: BorderRadius.circular(buttonHeight / 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: glowColor.withValues(alpha: 0.30),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    buttonText,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: buttonTextColor,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+// ── ICON BOX HELPER ─────────────────────────────────────────
+class _IconBox extends StatelessWidget {
+  const _IconBox({required this.icon, required this.color});
+
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(icon, size: 16, color: color),
     );
   }
 }
